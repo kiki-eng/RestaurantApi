@@ -7,7 +7,13 @@ using Restaurant.Services.Interfaces;
 
 public class FoodService : IFoodService
 {
-    public Task<CreateFoodResponse> CreateFoodAsync(CreateFoodRequest request, Guid userId)
+
+    private readonly ApplicationDbContext _context;
+    public FoodService(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+    public async Task<CreateFoodResponse> CreateFoodAsync(CreateFoodRequest request, Guid userId)
     {
 
         var food = new Food
@@ -24,21 +30,88 @@ public class FoodService : IFoodService
 
         _context.Foods.Add(food);
 
+        await _context.SaveChangesAsync();
+
+        return new CreateFoodResponse
+        {
+            Id = food.Id,
+            Name = food.Name,
+            Type = food.Type,
+            Price = food.Price,
+            Description = food.Description,
+
+        };
+
 
     }
 
-    public Task<IEnumerable<CreateFoodResponse>> GetAllFoodAsync()
+    public async Task<IEnumerable<CreateFoodResponse>> GetAllFoodAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        var foods = await _context.Foods
+            .Where(f=> f.CreatedByUserId == userId && !f.IsDeleted)
+            .Select(f => new CreateFoodResponse
+            {
+                Id = f.Id,
+                Name = f.Name,
+                Type = f.Type,
+                Price = f.Price,
+                Description = f.Description
+            })
+            .ToListAsync();
+
+        return foods;
     }
 
-    public Task<UpdateFoodResponse> UpdateFoodAsync( Guid foodId, UpdateFoodRequest request,Guid userId)
+    public async Task<UpdateFoodResponse> UpdateFoodAsync( Guid foodId, UpdateFoodRequest request,Guid userId)
     {
-        throw new NotImplementedException();
+        var food = await _context.Foods
+        .FirstOrDefaultAsync(f =>
+        f.Id == foodId &&
+        f.CreatedByUserId == userId &&
+        !f.IsDeleted);
+        
+        if(food == null)
+        {
+            throw new Exception("Food not found");
+        }
+        food.Name = request.Name;
+        food.Type = request.Type;
+        food.Price = request.Price;
+        food.Description = request.Description;
+
+        food.UpdatedAt = DateTime.UtcNow;
+        food.UpdatedByUserId = userId;
+
+        await _context.SaveChangesAsync();
+
+        return new UpdateFoodResponse
+        {
+            Id = food.Id,
+            Name = food.Name,
+            Type = food.Type,
+            Price = food.Price,
+            Description = food.Description
+        };
+
     }
 
-    public Task DeleteFoodAsync(Guid foodId, Guid userId)
+    public async Task DeleteFoodAsync(Guid foodId, Guid userId)
     {
-        throw new NotImplementedException();
+        var food = await _context.Foods
+            .FirstOrDefaultAsync(f =>
+            f.Id == foodId &&
+            f.CreatedByUserId == userId &&
+            !f.IsDeleted);
+
+        if (food == null)
+        {
+            throw new Exception("Food not found");
+        }
+
+        food.IsDeleted = true;
+        food.DeletedAt = DateTime.UtcNow;
+        food.DeletedByUserId = userId;
+
+        await _context.SaveChangesAsync();
     }
 }
