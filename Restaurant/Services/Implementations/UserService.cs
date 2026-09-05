@@ -10,10 +10,12 @@ namespace Restaurant.Services.Implementations
     public class UserService: IUserService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IJwtService _service;
 
-        public UserService(ApplicationDbContext context)
+        public UserService(ApplicationDbContext context, IJwtService service)
         {
             _context = context;
+            _service = service;
         }
 
        public async Task<RegisterUserResponse> RegisterUserAsync(RegisterUserRequest request)
@@ -49,13 +51,6 @@ namespace Restaurant.Services.Implementations
             };
         }
 
-        
-
-
-
-
-
-
 
         public async Task<LoginUserResponse> LoginUserAsync(LoginUserRequest request)
         {
@@ -64,7 +59,7 @@ namespace Restaurant.Services.Implementations
 
             if(user == null)
             {
-                throw new Exception("Invalid Email or Exception");
+                throw new Exception("Invalid Email or password");
             }
 
             var passwordIsValid = BCrypt.Net.BCrypt.Verify(
@@ -76,9 +71,11 @@ namespace Restaurant.Services.Implementations
                 throw new Exception("Invalid Email or password");
             }
 
+            var token = _service.GenerateToken(user);
+
             return new LoginUserResponse
             {
-                Token = "temporary-token",
+                Token = token,
                 ExpiresAt = DateTime.UtcNow.AddHours(1)
             };
         }

@@ -8,12 +8,14 @@
 	  <WarningsNotAsErrors>
 		  $(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904
 	  </WarningsNotAsErrors>
+    <UserSecretsId>aba27725-a4aa-4a21-bd87-f6b7a3a67a2e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
       <PrivateAssets>all</PrivateAssets>
