@@ -3,11 +3,10 @@
     public class User
     {
         public Guid Id { get; set; }
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; }
+        public string Name { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string Passwordhash { get; set; }
+        public string Passwordhash { get; set; } = string.Empty;
         public ICollection<Food> Foods { get; set; } = new List<Food>();
     }
 }

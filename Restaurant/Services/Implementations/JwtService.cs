@@ -1,6 +1,49 @@
-﻿namespace Restaurant.Services.Implementations
+﻿using Microsoft.IdentityModel.Tokens;
+using Restaurant.Entities;
+using Restaurant.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace Restaurant.Services.Implementations
 {
-    public class JwtService
+    public class JwtService: IJwtService
     {
+
+        private readonly IConfiguration _configuration;
+
+        public JwtService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+       public string GenerateToken(User user)
+        {
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)
+
+                );
+            var credentials = new SigningCredentials(key,
+                SecurityAlgorithms.HmacSha256
+              );
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                signingCredentials: credentials,
+                expires: DateTime.UtcNow.AddMinutes(60)
+                );
+
+             return new JwtSecurityTokenHandler()
+            .WriteToken(token);
+
+        }
     }
 }

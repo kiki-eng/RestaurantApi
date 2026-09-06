@@ -7,7 +7,7 @@ namespace Restaurant.Services.Interfaces
     {
         Task<CreateFoodResponse> CreateFoodAsync(CreateFoodRequest request, Guid userId);
 
-        Task<IEnumerable<CreateFoodResponse>> GetAllFoodAsync();
+        Task<IEnumerable<CreateFoodResponse>> GetAllFoodAsync(Guid userId);
 
         Task<UpdateFoodResponse> UpdateFoodAsync(Guid foodId, UpdateFoodRequest request, Guid userId);
 
