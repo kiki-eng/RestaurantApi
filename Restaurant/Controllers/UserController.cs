@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.DTOs;
 using Restaurant.Services.Interfaces;
@@ -25,6 +26,13 @@ namespace Restaurant.Controllers
 
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginUserRequest request)
+        {
+            var result = await _userservice.LoginUserAsync(request);
+
+            return Ok(result);
+        }
 
     }
 }
