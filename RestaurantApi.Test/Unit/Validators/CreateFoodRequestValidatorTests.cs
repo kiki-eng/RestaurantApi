@@ -114,5 +114,21 @@ namespace RestaurantApi.Test.Unit.Validators
 
             result.ShouldNotHaveValidationErrorFor(x => x.Price);
         }
+
+        [Fact]
+        public void Type_WhenEmpty_ShouldHaveValidationError()
+        {
+            var model = new CreateFoodRequest
+            {
+                Name = "Test Food",
+                Type = "",
+                Price = 10.00m,
+                Description = "Valid food description"
+            };
+
+            var result = _validators.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Type);
+        }
     }
 }
