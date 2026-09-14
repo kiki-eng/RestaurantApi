@@ -82,5 +82,21 @@ namespace RestaurantApi.Test.Unit.Validators
 
             result.ShouldNotHaveAnyValidationErrors();
         }
+
+        [Fact]
+        public void Price_WhenNegative_ShouldHaveValidationError()
+        {
+            var model = new CreateFoodRequest
+            {
+                Name = "Test Food",
+                Type = "Main Course",
+                Price = -1,
+                Description = "Valid food description"
+            };
+
+            var result = _validators.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Price);
+        }
     }
 }
