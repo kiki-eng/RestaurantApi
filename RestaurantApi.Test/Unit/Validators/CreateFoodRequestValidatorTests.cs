@@ -209,5 +209,21 @@ namespace RestaurantApi.Test.Unit.Validators
 
             result.ShouldNotHaveValidationErrorFor(x => x.Description);
         }
+
+        [Fact]
+        public void Description_WhenMoreThan500Characters_ShouldHaveValidationError()
+        {
+            var model = new CreateFoodRequest
+            {
+                Name = "Test Food",
+                Type = "Main Course",
+                Price = 10.00m,
+                Description = new string('A', 501)
+            };
+
+            var result = _validators.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Description);
+        }
     }
 }
