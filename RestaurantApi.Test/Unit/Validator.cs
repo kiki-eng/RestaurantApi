@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RestaurantApi.Test
+namespace RestaurantApi.Test.Unit
 {
-    internal class CreateFoodRequestValidatorTests
+    internal class Validator
     {
     }
 }
