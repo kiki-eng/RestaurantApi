@@ -273,5 +273,6 @@ namespace RestaurantApi.Test.Unit.Validators
 
             result.ShouldNotHaveValidationErrorFor(x => x.Description);
         }
+
     }
 }
