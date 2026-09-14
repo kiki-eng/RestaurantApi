@@ -51,6 +51,22 @@ namespace RestaurantApi.Test.Unit.Validators
         }
 
         [Fact]
+        public void Name_WhenExactly100Characters_ShouldNotHaveValidationError()
+        {
+            var model = new CreateFoodRequest
+            {
+                Name = new string('A', 100),
+                Type = "Main Course",
+                Price = 10.00m,
+                Description = "Valid food description"
+            };
+
+            var result = _validators.TestValidate(model);
+
+            result.ShouldNotHaveValidationErrorFor(x => x.Name);
+        }
+
+        [Fact]
         public void Name_WhenMoreThan100Characters_ShouldHaveValidationError()
         {
             var model = new CreateFoodRequest
