@@ -1,4 +1,5 @@
-﻿using Restaurant.DTOs;
+﻿using FluentValidation.TestHelper;
+using Restaurant.DTOs;
 using Restaurant.Validators;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace RestaurantApi.Test.Unit.Validators
     {
         private readonly CreateFoodRequestValidator _validators;
         public CreateFoodRequestValidatorTests()
-        { 
+        {
             _validators = new CreateFoodRequestValidator();
 
         }
@@ -28,6 +29,10 @@ namespace RestaurantApi.Test.Unit.Validators
                 Description = "Test food"
             };
 
+            var result = _validators.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Name);
+
         }
         [Fact]
         public void Name_WhenValid_ShouldNotHaveValidationError()
@@ -39,8 +44,13 @@ namespace RestaurantApi.Test.Unit.Validators
                 Price = 10,
                 Description = "Test food"
             };
+
+            var result = _validators.TestValidate(model);
+
+            result.ShouldNotHaveValidationErrorFor(x => x.Name);
         }
 
+        [Fact]
         public void Price_WhenZero_ShouldHaveValidationError()
         {
             var model = new CreateFoodRequest
@@ -51,6 +61,26 @@ namespace RestaurantApi.Test.Unit.Validators
                 Description = "Test food"
 
             };
+            var result = _validators.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Price);
+
+        }
+
+        [Fact]
+        public void ValidRequest_ShouldNotHaveAnyValidationErrors()
+        {
+            var model = new CreateFoodRequest
+            {
+                Name = "Jollof Rice",
+                Type = "Main",
+                Price = 15.50m,
+                Description = "Delicious rice dish"
+            };
+
+            var result = _validators.TestValidate(model);
+
+            result.ShouldNotHaveAnyValidationErrors();
         }
     }
 }
