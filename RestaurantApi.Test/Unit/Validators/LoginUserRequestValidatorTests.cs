@@ -33,5 +33,16 @@ namespace RestaurantApi.Test.Unit.Validators
 
             result.ShouldHaveValidationErrorFor(x => x.Email);
         }
+
+        [Fact]
+        public void Email_WhenInvalid_ShouldHaveValidationError()
+        {
+            var model = CreateValidRequest();
+            model.Email = "invalid-email";
+
+            var result = _validator.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Email);
+        }
     }
 }
