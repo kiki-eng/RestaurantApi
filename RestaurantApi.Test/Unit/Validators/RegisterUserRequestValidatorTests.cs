@@ -95,5 +95,21 @@ namespace RestaurantApi.Test.Unit.Validators
             result.ShouldHaveValidationErrorFor(x => x.Email);
         }
 
+        [Fact]
+        public void Email_WhenInvalid_ShouldHaveValidationError()
+        {
+            var model = new RegisterUserRequest
+            {
+                Name = "Test User",
+                Email = "invalid-email",
+                Password = "Password123",
+                Location = "Toronto"
+            };
+
+            var result = _request.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Email);
+        }
+
     }
 }
