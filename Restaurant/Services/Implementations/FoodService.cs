@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Restaurant.Data;
 using Restaurant.DTOs;
 using Restaurant.DTOs.ResponseDTOs;
@@ -9,9 +10,11 @@ public class FoodService : IFoodService
 {
 
     private readonly ApplicationDbContext _context;
-    public FoodService(ApplicationDbContext context)
+    private readonly IMemoryCache _memoryCache;
+    public FoodService(ApplicationDbContext context, IMemoryCache cache)
     {
         _context = context;
+        _memoryCache = cache;
     }
     public async Task<CreateFoodResponse> CreateFoodAsync(CreateFoodRequest request, Guid userId)
     {
@@ -31,6 +34,7 @@ public class FoodService : IFoodService
         _context.Foods.Add(food);
 
         await _context.SaveChangesAsync();
+        _memoryCache.Remove($"foods:{userId}");
 
         return new CreateFoodResponse
         {
@@ -47,8 +51,17 @@ public class FoodService : IFoodService
 
     public async Task<IEnumerable<CreateFoodResponse>> GetAllFoodAsync(Guid userId)
     {
+        var cacheKey = $"foods:{userId}";
+
+        if (_memoryCache.TryGetValue(
+            cacheKey,
+            out IEnumerable<CreateFoodResponse>? cachedFoods))
+        {
+            return cachedFoods!;
+        }
+
         var foods = await _context.Foods
-            .Where(f=> f.CreatedByUserId == userId && !f.IsDeleted)
+            .Where(f => f.CreatedByUserId == userId && !f.IsDeleted)
             .Select(f => new CreateFoodResponse
             {
                 Id = f.Id,
@@ -58,6 +71,12 @@ public class FoodService : IFoodService
                 Description = f.Description
             })
             .ToListAsync();
+
+        _memoryCache.Set(
+            cacheKey,
+            foods,
+            TimeSpan.FromMinutes(5)
+        );
 
         return foods;
     }
@@ -83,6 +102,8 @@ public class FoodService : IFoodService
         food.UpdatedByUserId = userId;
 
         await _context.SaveChangesAsync();
+
+        _memoryCache.Remove($"foods:{userId}");
 
         return new UpdateFoodResponse
         {
@@ -113,5 +134,7 @@ public class FoodService : IFoodService
         food.DeletedByUserId = userId;
 
         await _context.SaveChangesAsync();
+
+        _memoryCache.Remove($"foods:{userId}");
     }
 }
