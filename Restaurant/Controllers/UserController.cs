@@ -1,13 +1,17 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Restaurant.DTOs;
 using Restaurant.Services.Interfaces;
+
 
 namespace Restaurant.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+    [EnableRateLimiting("auth")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userservice;
