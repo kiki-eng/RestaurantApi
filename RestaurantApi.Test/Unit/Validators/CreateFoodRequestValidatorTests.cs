@@ -1,51 +1,46 @@
 ﻿using FluentValidation.TestHelper;
 using Restaurant.DTOs;
 using Restaurant.Validators;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Xml.Linq;
 
 namespace RestaurantApi.Test.Unit.Validators
 {
     public class CreateFoodRequestValidatorTests
     {
-        private readonly CreateFoodRequestValidator _validators;
+        private readonly CreateFoodRequestValidator _validator;
+
         public CreateFoodRequestValidatorTests()
         {
-            _validators = new CreateFoodRequestValidator();
+            _validator = new CreateFoodRequestValidator();
+        }
 
+        private static CreateFoodRequest CreateValidRequest()
+        {
+            return new CreateFoodRequest
+            {
+                Name = "Test Food",
+                Type = "Main Course",
+                Price = 10.00m,
+                Description = "Valid food description"
+            };
         }
 
         [Fact]
         public void Name_WhenEmpty_ShouldHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "",
-                Type = "Main",
-                Price = 10,
-                Description = "Test food"
-            };
+            var model = CreateValidRequest();
+            model.Name = "";
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldHaveValidationErrorFor(x => x.Name);
-
         }
+
         [Fact]
         public void Name_WhenValid_ShouldNotHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Jollof Rice",
-                Type = "Main",
-                Price = 10,
-                Description = "Test food"
-            };
+            var model = CreateValidRequest();
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldNotHaveValidationErrorFor(x => x.Name);
         }
@@ -53,15 +48,10 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Name_WhenExactly100Characters_ShouldNotHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = new string('A', 100),
-                Type = "Main Course",
-                Price = 10.00m,
-                Description = "Valid food description"
-            };
+            var model = CreateValidRequest();
+            model.Name = new string('A', 100);
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldNotHaveValidationErrorFor(x => x.Name);
         }
@@ -69,15 +59,10 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Name_WhenMoreThan100Characters_ShouldHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = new string('A', 101),
-                Type = "Main Course",
-                Price = 10.00m,
-                Description = "Valid food description"
-            };
+            var model = CreateValidRequest();
+            model.Name = new string('A', 101);
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldHaveValidationErrorFor(x => x.Name);
         }
@@ -85,48 +70,21 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Price_WhenZero_ShouldHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Jollof Rice",
-                Type = "Main",
-                Price = 0,
-                Description = "Test food"
+            var model = CreateValidRequest();
+            model.Price = 0;
 
-            };
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldHaveValidationErrorFor(x => x.Price);
-
-        }
-
-        [Fact]
-        public void ValidRequest_ShouldNotHaveAnyValidationErrors()
-        {
-            var model = new CreateFoodRequest
-            {
-                Name = "Jollof Rice",
-                Type = "Main",
-                Price = 15.50m,
-                Description = "Delicious rice dish"
-            };
-
-            var result = _validators.TestValidate(model);
-
-            result.ShouldNotHaveAnyValidationErrors();
         }
 
         [Fact]
         public void Price_WhenNegative_ShouldHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = "Main Course",
-                Price = -1,
-                Description = "Valid food description"
-            };
+            var model = CreateValidRequest();
+            model.Price = -1;
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldHaveValidationErrorFor(x => x.Price);
         }
@@ -134,15 +92,9 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Price_WhenValid_ShouldNotHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = "Main Course",
-                Price = 10.00m,
-                Description = "Valid food description"
-            };
+            var model = CreateValidRequest();
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldNotHaveValidationErrorFor(x => x.Price);
         }
@@ -150,15 +102,10 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Type_WhenEmpty_ShouldHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = "",
-                Price = 10.00m,
-                Description = "Valid food description"
-            };
+            var model = CreateValidRequest();
+            model.Type = "";
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldHaveValidationErrorFor(x => x.Type);
         }
@@ -166,30 +113,20 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Type_WhenValid_ShouldNotHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = "Main Course",
-                Price = 10.00m,
-                Description = "Valid food description"
-            };
+            var model = CreateValidRequest();
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
+
             result.ShouldNotHaveValidationErrorFor(x => x.Type);
         }
 
         [Fact]
         public void Type_WhenMoreThan50Characters_ShouldHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = new string('A', 51),
-                Price = 10.00m,
-                Description = "Valid food description"
-            };
+            var model = CreateValidRequest();
+            model.Type = new string('A', 51);
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldHaveValidationErrorFor(x => x.Type);
         }
@@ -197,15 +134,10 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Type_WhenExactly50Characters_ShouldNotHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = new string('A', 50),
-                Price = 10.00m,
-                Description = "Valid food description"
-            };
+            var model = CreateValidRequest();
+            model.Type = new string('A', 50);
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldNotHaveValidationErrorFor(x => x.Type);
         }
@@ -213,15 +145,10 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Description_WhenEmpty_ShouldHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = "Main Course",
-                Price = 10.00m,
-                Description = ""
-            };
+            var model = CreateValidRequest();
+            model.Description = "";
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldHaveValidationErrorFor(x => x.Description);
         }
@@ -229,15 +156,9 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Description_WhenValid_ShouldNotHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = "Main Course",
-                Price = 10.00m,
-                Description = "Valid food description"
-            };
+            var model = CreateValidRequest();
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldNotHaveValidationErrorFor(x => x.Description);
         }
@@ -245,15 +166,10 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Description_WhenMoreThan500Characters_ShouldHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = "Main Course",
-                Price = 10.00m,
-                Description = new string('A', 501)
-            };
+            var model = CreateValidRequest();
+            model.Description = new string('A', 501);
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldHaveValidationErrorFor(x => x.Description);
         }
@@ -261,18 +177,22 @@ namespace RestaurantApi.Test.Unit.Validators
         [Fact]
         public void Description_WhenExactly500Characters_ShouldNotHaveValidationError()
         {
-            var model = new CreateFoodRequest
-            {
-                Name = "Test Food",
-                Type = "Main Course",
-                Price = 10.00m,
-                Description = new string('A', 500)
-            };
+            var model = CreateValidRequest();
+            model.Description = new string('A', 500);
 
-            var result = _validators.TestValidate(model);
+            var result = _validator.TestValidate(model);
 
             result.ShouldNotHaveValidationErrorFor(x => x.Description);
         }
 
+        [Fact]
+        public void ValidRequest_ShouldNotHaveAnyValidationErrors()
+        {
+            var model = CreateValidRequest();
+
+            var result = _validator.TestValidate(model);
+
+            result.ShouldNotHaveAnyValidationErrors();
+        }
     }
 }
