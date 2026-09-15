@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Restaurant.DTOs;
-using Restaurant.Services;
 using Restaurant.Services.Interfaces;
 using System.Security.Claims;
 
@@ -10,6 +10,7 @@ namespace Restaurant.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
+    [EnableRateLimiting("standard")]
     public class FoodController : ControllerBase
     {
         private readonly IFoodService _foodService;
