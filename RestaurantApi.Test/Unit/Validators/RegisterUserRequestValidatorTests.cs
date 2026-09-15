@@ -63,5 +63,37 @@ namespace RestaurantApi.Test.Unit.Validators
             result.ShouldHaveValidationErrorFor(x => x.Name);
         }
 
+        [Fact]
+        public void Name_WhenExactly100Characters_ShouldNotHaveValidationError()
+        {
+            var model = new RegisterUserRequest
+            {
+                Name = new string('A', 100),
+                Email = "test@example.com",
+                Password = "Password123",
+                Location = "Toronto"
+            };
+
+            var result = _request.TestValidate(model);
+
+            result.ShouldNotHaveValidationErrorFor(x => x.Name);
+        }
+
+        [Fact]
+        public void Email_WhenEmpty_ShouldHaveValidationError()
+        {
+            var model = new RegisterUserRequest
+            {
+                Name = "Test User",
+                Email = "",
+                Password = "Password123",
+                Location = "Toronto"
+            };
+
+            var result = _request.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Email);
+        }
+
     }
 }
