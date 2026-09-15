@@ -141,5 +141,21 @@ namespace RestaurantApi.Test.Unit.Validators
             result.ShouldHaveValidationErrorFor(x => x.Password);
         }
 
+        [Fact]
+        public void Password_WhenLessThan8Characters_ShouldHaveValidationError()
+        {
+            var model = new RegisterUserRequest
+            {
+                Name = "Test User",
+                Email = "test@example.com",
+                Password = "Pass123",
+                Location = "Toronto"
+            };
+
+            var result = _request.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Password);
+        }
+
     }
 }
