@@ -54,5 +54,16 @@ namespace RestaurantApi.Test.Unit.Validators
 
             result.ShouldNotHaveValidationErrorFor(x => x.Email);
         }
+
+        [Fact]
+        public void Password_WhenEmpty_ShouldHaveValidationError()
+        {
+            var model = CreateValidRequest();
+            model.Password = "";
+
+            var result = _validator.TestValidate(model);
+
+            result.ShouldHaveValidationErrorFor(x => x.Password);
+        }
     }
 }
