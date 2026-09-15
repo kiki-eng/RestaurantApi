@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Restaurant.Data;
+using Restaurant.Extensions;
 using Restaurant.Services.Implementations;
 using Restaurant.Services.Interfaces;
 using System.Text;
@@ -78,16 +79,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
-builder.Services.AddRateLimiter(options =>
-{
-    options.AddFixedWindowLimiter("fixed", limiterOptions =>
-    {
-        limiterOptions.PermitLimit = 5;
-        limiterOptions.Window = TimeSpan.FromSeconds(10);
-        limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        limiterOptions.QueueLimit = 0;
-    });
-});
+builder.Services.AddApplicationRateLimiting();
 
 var app = builder.Build();
 
